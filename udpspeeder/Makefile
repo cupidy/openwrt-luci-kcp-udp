@@ -7,13 +7,13 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=udpspeeder
-PKG_VERSION:=20180821.0
+PKG_NAME:=udp2raw-tunnel
+PKG_VERSION:=20200818.0
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/wangyu-/UDPspeeder.git
-PKG_SOURCE_VERSION:=8db00a87f433d174f3bdabaf95f8659c66a1c52e
+PKG_SOURCE_URL:=https://github.com/wangyu-/udp2raw-tunnel.git
+PKG_SOURCE_VERSION:=cc6ea766c495cf4c69d1c7485728ba022b0f19de
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 
@@ -27,16 +27,16 @@ PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/udpspeeder
+define Package/udp2raw-tunnel
 	SECTION:=net
 	CATEGORY:=Network
-	TITLE:=UDP Network Speed-Up Tool
-	URL:=https://github.com/wangyu-/UDPspeeder
-	DEPENDS:= +libstdcpp +librt
+	TITLE:=Tunnel which turns UDP Traffic into Encrypted FakeTCP/UDP/ICMP Traffic
+	URL:=https://github.com/wangyu-/udp2raw-tunnel
+	DEPENDS:= +libstdcpp +libpthread +librt
 endef
 
-define Package/udpspeeder/description
-	 A Tunnel which Improves your Network Quality on a High-latency Lossy Link by using Forward Error Correction,for All Traffics(TCP/UDP/ICMP)
+define Package/udp2raw-tunnel/description
+	udp2raw-tunnel is a tunnel which turns UDP Traffic into Encrypted FakeTCP/UDP/ICMP Traffic by using Raw Socket.
 endef
 
 MAKE_FLAGS += cross
@@ -44,14 +44,14 @@ MAKE_FLAGS += cross
 define Build/Prepare
 	$(PKG_UNPACK)
 	sed -i 's/cc_cross=.*/cc_cross=$(TARGET_CXX)/g' $(PKG_BUILD_DIR)/makefile
-	sed -i '/\gitversion/d' $(PKG_BUILD_DIR)/makefile
-	echo 'const char * const gitversion = "$(PKG_VERSION)";' > $(PKG_BUILD_DIR)/git_version.h
+	sed -i '/\*gitversion/d' $(PKG_BUILD_DIR)/makefile
+	echo 'const char *gitversion = "$(PKG_VERSION)";' > $(PKG_BUILD_DIR)/git_version.h
 	$(Build/Patch)
 endef
 
-define Package/udpspeeder/install
+define Package/udp2raw-tunnel/install
 	$(INSTALL_DIR) $(1)/usr/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/speederv2_cross $(1)/usr/bin/udpspeeder
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/udp2raw_cross $(1)/usr/bin/udp2raw
 endef
 
-$(eval $(call BuildPackage,udpspeeder))
+$(eval $(call BuildPackage,udp2raw-tunnel))
